@@ -2,7 +2,7 @@ THIS_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 
 -include $(THIS_DIR)/../swarm.env
 
-PUBLIC_HOST := $(TARGET)-$(FACILITY).$(DOMAIN)
+PUBLIC_HOST ?= $(TARGET)-$(FACILITY).$(DOMAIN)
 STACK = $(SERVICE)_$(FACILITY)_$(TARGET)
 
 AWS_STORAGE_BUCKET_NAME ?= $(SERVICE)-$(FACILITY)-$(TARGET)
