@@ -1,7 +1,6 @@
 THIS_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 
-include $(THIS_DIR)/../swarm.env
--include $(THIS_DIR)/../../../../deploy/docker_swarm/mk/common.mk
+-include $(THIS_DIR)/../swarm.env
 
 PUBLIC_HOST := $(TARGET)-$(FACILITY).$(DOMAIN)
 STACK = $(SERVICE)_$(FACILITY)_$(TARGET)

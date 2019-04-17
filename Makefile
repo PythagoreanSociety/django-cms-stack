@@ -3,12 +3,12 @@
 -include .env
 
 DOMAIN ?= example.com
-SERVICE ?= $(DOMAIN:.=_)
+SERVICE ?= example_com
 
 FACILITY ?= cms
 DC ?= docker-compose
 TARGET ?= dev
-
+DOCKER_REGISTRY ?= registry.$(DOMAIN)
 
 # use revision hash as build tag
 TAG ?= $(shell git status 2>&1 >/dev/null && git rev-parse --short HEAD)
@@ -27,9 +27,10 @@ PSQL_ARGS ?= -h db -U postgres
 -include config/env/common.env
 
 -include config/env/$(TARGET).env
--include config/mk/swarm.mk
+include config/mk/swarm.mk
 
 export
+
 
 up: dev-srv
 
@@ -40,7 +41,6 @@ dev-srv: dc-up
 dc-%:
 	$(DC) $* $(A)
 
-	
 build: dc-build
 
 mig:
