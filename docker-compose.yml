@@ -1,0 +1,38 @@
+version: '3.5'
+
+services:
+   web: &WEB
+      image: ${DOCKER_REGISTRY}/${SERVICE}_${FACILITY}_web:${TAG}
+      working_dir: /app
+      build: 
+         context: .
+         args:
+         - TARGET=${TARGET}
+      
+      depends_on:
+      - db
+      - cache
+      
+      env_file:
+      - config/env/common.env
+      
+      volumes:
+      - logs:/var/log/
+   
+      command: make srv TARGET=${TARGET}
+      
+   migrate:
+      <<: *WEB
+      command: make dj-collectstatic dj-migrate TARGET=${TARGET}
+
+   db:
+      image: postgres
+      volumes:
+      - db-data:/var/lib/postgresql/data
+      
+   cache:
+      image: redis
+ 
+volumes:
+   logs:
+   db-data:

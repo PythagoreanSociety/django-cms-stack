@@ -1,0 +1,76 @@
+version: '3.5'
+
+services:
+    web: 
+        networks:
+        - proxy
+        - default
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+
+        deploy:
+            labels:
+            - traefik.enable=true
+            - traefik.backend=web
+            - "traefik.frontend.rule=Host:${PUBLIC_HOST}"
+            - traefik.docker.network=proxy
+            - traefik.port=${PORT}
+            - traefik.default.protocol=http
+            - traefik.frontend.headers.SSLRedirect=true
+
+            
+            mode: global
+            placement:
+                constraints:
+                - node.labels.${SERVICE}.${FACILITY}.web==true
+    migrate:
+        deploy:
+            restart_policy:
+               condition: none
+        
+    cache:
+        networks:
+        - default
+        deploy:
+            replicas: 1
+        environment:
+        - TZ
+        
+    db:
+        networks:
+        - default
+        deploy:
+            placement:
+                constraints:
+                - node.labels.${SERVICE}.${FACILITY}.db==true
+            replicas: 1
+        environment:
+        - TZ
+            
+    restoredb: 
+        image: ${DOCKER_REGISTRY}/${SERVICE}_${FACILITY}_web:${TAG}
+        networks:
+        - default
+        environment:
+        - TZ
+        working_dir: /app
+        command: make restoredb
+        deploy:
+            restart_policy:
+               condition: none
+            replicas: 0
+        depends_on:
+          - postgres
+          
+networks:
+    proxy:
+        external: true
+    default:
+        external: false
+        
+volumes:
+   logs:
+   public:
+   import:
+
+

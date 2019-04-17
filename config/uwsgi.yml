@@ -1,0 +1,25 @@
+uwsgi:
+    chdir: /app
+    module: django_cms.wsgi
+    master: true
+    pidfile: /tmp/app-master.pid
+    vacuum: true
+    max-requests: 5000
+    processes: 5
+    cheaper: 2
+    cheaper-initial: 5
+    gid: root
+    uid: root
+    http-socket: 0.0.0.0:8000
+    stats: 0.0.0.0:8001
+    env: IS_WSGI=True
+    env: DJANGO_SETTINGS_MODULE=django_cms.settings
+    env: PYTHONWARNINGS=ignore
+    proxy_read_timeout: 180
+    need-app: true
+    buffer-size: 16384
+
+    static-map: /static=/app/static
+    static-expires: /* 7776000
+    threads: "%k"
+    offload-threads: "%k"
